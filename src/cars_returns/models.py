@@ -8,7 +8,9 @@ from datetime import datetime
 class User:
     id: str
     email: str
+    name: str
     role: str
+    password_hash: str = ""
 
 
 @dataclass(frozen=True)
@@ -57,4 +59,3 @@ class AuditEvent:
     action: str
     created_at: datetime
     metadata: dict[str, str] = field(default_factory=dict)
-

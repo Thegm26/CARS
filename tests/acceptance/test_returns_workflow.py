@@ -11,11 +11,22 @@ from cars_returns.service import ReturnsService
 class ReturnsWorkflowAcceptanceTests(unittest.TestCase):
     def setUp(self) -> None:
         now = datetime.now(UTC)
-        self.customer = User(id="cust_1", email="customer@example.com", role="customer")
-        self.agent = User(id="agent_1", email="agent@example.com", role="support_agent")
+        self.customer = User(
+            id="cust_1",
+            email="customer@example.com",
+            name="Jamie Customer",
+            role="customer",
+        )
+        self.agent = User(
+            id="agent_1",
+            email="agent@example.com",
+            name="Alex Agent",
+            role="support_agent",
+        )
         self.manager = User(
             id="manager_1",
             email="manager@example.com",
+            name="Riley Manager",
             role="support_manager",
         )
         order = Order(
@@ -29,7 +40,7 @@ class ReturnsWorkflowAcceptanceTests(unittest.TestCase):
             ],
             shipping_paid=9.99,
         )
-        self.service = ReturnsService(InMemoryRepository([order]))
+        self.service = ReturnsService(InMemoryRepository([order], [self.customer, self.agent, self.manager]))
 
     def test_customer_can_create_a_return_request_for_owned_order(self) -> None:
         request = self.service.create_return_request(
@@ -62,4 +73,3 @@ class ReturnsWorkflowAcceptanceTests(unittest.TestCase):
 
         self.assertEqual(approved.status, "approved")
         self.assertEqual(approved.decision_by, "manager_1")
-

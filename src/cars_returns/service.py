@@ -36,6 +36,15 @@ class ReturnsService:
             return orders
         return [order for order in orders if order.customer_id == user.id]
 
+    def list_return_requests_for_user(self, user: User) -> list[ReturnRequest]:
+        if user.role in {"support_agent", "support_manager"}:
+            return self.repository.list_return_requests()
+        return self.repository.list_return_requests_for_customer(user.id)
+
+    def list_pending_requests_for_review(self, user: User) -> list[ReturnRequest]:
+        require_role(user, {"support_manager"})
+        return self.repository.list_pending_return_requests()
+
     def get_order_for_user(self, user: User, order_id: str) -> Order:
         order = self.repository.get_order(order_id)
         if order is None:
@@ -128,8 +137,16 @@ class ReturnsService:
         return saved
 
     def list_audit_events(self, user: User, request_id: str) -> list[AuditEvent]:
-        require_role(user, {"support_agent", "support_manager"})
+        request = self._get_request(request_id)
+        if user.role not in {"support_agent", "support_manager"} and request.customer_id != user.id:
+            raise AuthorizationError("return request is not visible to this user")
         return self.repository.list_audit_events_for_request(request_id)
+
+    def get_return_request_for_user(self, user: User, request_id: str) -> ReturnRequest:
+        request = self._get_request(request_id)
+        if user.role not in {"support_agent", "support_manager"} and request.customer_id != user.id:
+            raise AuthorizationError("return request is not visible to this user")
+        return request
 
     @staticmethod
     def sanitize_notes(notes: str) -> str:

@@ -12,11 +12,22 @@ from cars_returns.service import DomainError, ReturnsService
 class ReturnsRegressionTests(unittest.TestCase):
     def setUp(self) -> None:
         now = datetime.now(UTC)
-        self.customer = User(id="cust_1", email="customer@example.com", role="customer")
-        self.agent = User(id="agent_1", email="agent@example.com", role="support_agent")
+        self.customer = User(
+            id="cust_1",
+            email="customer@example.com",
+            name="Jamie Customer",
+            role="customer",
+        )
+        self.agent = User(
+            id="agent_1",
+            email="agent@example.com",
+            name="Alex Agent",
+            role="support_agent",
+        )
         self.manager = User(
             id="manager_1",
             email="manager@example.com",
+            name="Riley Manager",
             role="support_manager",
         )
         orders = [
@@ -57,7 +68,9 @@ class ReturnsRegressionTests(unittest.TestCase):
                 requested_items=[ReturnRequestItem("sku_keyboard", 1)],
             )
         ]
-        self.service = ReturnsService(InMemoryRepository(orders, return_requests))
+        self.service = ReturnsService(
+            InMemoryRepository(orders, [self.customer, self.agent, self.manager], return_requests)
+        )
 
     def test_support_agent_cannot_approve_high_value_return(self) -> None:
         with self.assertRaises(AuthorizationError):

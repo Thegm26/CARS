@@ -2,22 +2,36 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from cars_returns.auth import TokenAuth
+from cars_returns.auth import hash_password
 from cars_returns.models import Order, OrderItem, ReturnRequest, ReturnRequestItem, User
 from cars_returns.repository import InMemoryRepository
 from cars_returns.service import ReturnsService
 
 
-def build_seed_users() -> dict[str, User]:
-    return {
-        "customer-token": User(id="cust_1", email="customer@example.com", role="customer"),
-        "agent-token": User(id="agent_1", email="agent@example.com", role="support_agent"),
-        "manager-token": User(
+def build_seed_users() -> list[User]:
+    return [
+        User(
+            id="cust_1",
+            email="customer@example.com",
+            name="Jamie Customer",
+            role="customer",
+            password_hash=hash_password("customer123"),
+        ),
+        User(
+            id="agent_1",
+            email="agent@example.com",
+            name="Alex Agent",
+            role="support_agent",
+            password_hash=hash_password("agent123"),
+        ),
+        User(
             id="manager_1",
             email="manager@example.com",
+            name="Riley Manager",
             role="support_manager",
+            password_hash=hash_password("manager123"),
         ),
-    }
+    ]
 
 
 def build_seed_repository() -> InMemoryRepository:
@@ -57,12 +71,8 @@ def build_seed_repository() -> InMemoryRepository:
             notes="Key chatter on the A key",
         )
     ]
-    return InMemoryRepository(orders, requests)
+    return InMemoryRepository(orders, build_seed_users(), requests)
 
 
-def build_seed_app_context() -> tuple[TokenAuth, ReturnsService]:
-    users = build_seed_users()
-    auth = TokenAuth(users)
-    service = ReturnsService(build_seed_repository())
-    return auth, service
-
+def build_seed_service() -> ReturnsService:
+    return ReturnsService(build_seed_repository())
