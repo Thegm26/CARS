@@ -1,0 +1,40 @@
+{
+  "id": "cart-discount",
+  "title": "Fix VIP discount handling in checkout totals",
+  "ticket": "VIP customers should receive a 10% discount on taxable items only. Free shipping remains based on the pre-discount subtotal. Keep the change focused on pricing logic and document assumptions, risks, and tests.",
+  "allowed_files": [
+    "pricing.py"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "text": "Apply the VIP discount only to taxable items."
+    },
+    {
+      "id": "AC2",
+      "text": "Evaluate free shipping using the pre-discount subtotal."
+    },
+    {
+      "id": "AC3",
+      "text": "Preserve cent-level rounding in the returned totals."
+    }
+  ],
+  "required_review_sections": [
+    "What changed",
+    "Why",
+    "Assumptions",
+    "Risks",
+    "Test plan"
+  ],
+  "banned_calls": [
+    "eval",
+    "exec",
+    "compile",
+    "system",
+    "popen"
+  ],
+  "rework_limits": {
+    "max_touched_files": 1,
+    "max_changed_lines": 35
+  }
+}

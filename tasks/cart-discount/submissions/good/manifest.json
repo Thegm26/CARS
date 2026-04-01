@@ -1,0 +1,14 @@
+{
+  "submission_id": "good",
+  "touched_files": [
+    "pricing.py"
+  ],
+  "acceptance_mapping": {
+    "AC1": "Discount is now computed from the taxable subtotal only.",
+    "AC2": "Shipping eligibility uses the original subtotal before discount application.",
+    "AC3": "Totals are rounded to cents when returned."
+  },
+  "tests_run": [
+    "python -m unittest discover -s tests -t ."
+  ]
+}
