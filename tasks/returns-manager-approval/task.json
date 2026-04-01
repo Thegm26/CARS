@@ -1,0 +1,44 @@
+{
+  "id": "returns-manager-approval",
+  "title": "High-value refunds require manager approval",
+  "ticket": "Support agents should not be able to approve refunds above the configured threshold. Enforce the policy in the backend and keep the behavior clear in tests and delivery notes.",
+  "allowed_files": [
+    "service.py",
+    "app.py",
+    "tests/regression/test_returns_regressions.py",
+    "tests/regression/test_returns_http.py"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "text": "Support agents cannot approve refunds above the manager approval threshold."
+    },
+    {
+      "id": "AC2",
+      "text": "Support managers can approve the same requests."
+    },
+    {
+      "id": "AC3",
+      "text": "Unauthorized approval attempts return the expected API error."
+    }
+  ],
+  "required_review_sections": [
+    "What changed",
+    "Why",
+    "Assumptions",
+    "Risks",
+    "Test plan"
+  ],
+  "banned_calls": [
+    "eval",
+    "exec",
+    "compile",
+    "system",
+    "popen"
+  ],
+  "rework_limits": {
+    "max_touched_files": 4,
+    "max_changed_lines": 70
+  }
+}
+

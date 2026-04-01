@@ -1,0 +1,43 @@
+{
+  "id": "returns-partial-refund",
+  "title": "Refund total should exclude items not included in the return request",
+  "ticket": "Support reported that partial returns can refund the full order total. Update refund calculation so only requested items are refunded. Keep the change focused on return pricing and document assumptions, risks, and tests.",
+  "allowed_files": [
+    "service.py",
+    "tests/acceptance/test_returns_workflow.py",
+    "tests/regression/test_returns_regressions.py"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "text": "Refund total includes only the requested return items."
+    },
+    {
+      "id": "AC2",
+      "text": "Refund total is rounded to cents at the API boundary."
+    },
+    {
+      "id": "AC3",
+      "text": "Unrelated order totals are not changed."
+    }
+  ],
+  "required_review_sections": [
+    "What changed",
+    "Why",
+    "Assumptions",
+    "Risks",
+    "Test plan"
+  ],
+  "banned_calls": [
+    "eval",
+    "exec",
+    "compile",
+    "system",
+    "popen"
+  ],
+  "rework_limits": {
+    "max_touched_files": 3,
+    "max_changed_lines": 60
+  }
+}
+

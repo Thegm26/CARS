@@ -2,7 +2,7 @@
 
 CARS stands for `Correctness, Alignment, Reviewability, and Safety`.
 
-This repo is a small demonstration of a coding-agent evaluation model for scrum teams. It argues that `resolved_tasks / total_tasks` is not enough. A team needs code that is:
+This repo is a small but expanding demonstration of a coding-agent evaluation model for scrum teams. It argues that `resolved_tasks / total_tasks` is not enough. A team needs code that is:
 
 - correct
 - aligned with ticket intent
@@ -17,7 +17,7 @@ The primary metric in this repo is:
 
 Most coding-agent benchmarks reward task completion. Real teams merge code only when a change is technically correct and understandable. CARS turns that into an explicit evaluation rule.
 
-In this demo:
+In the current repo:
 
 - the task is a pricing fix in a small store service
 - there are acceptance tests and regression tests
@@ -27,12 +27,21 @@ In this demo:
 
 That contrast is the point of the repo.
 
+The repo now also includes a realistic `Returns and Claims` app scaffold with:
+
+- a backend service layer
+- simple bearer-token authentication and role checks
+- lightweight HTML and JSON endpoints
+- a first set of benchmark task definitions for a returns workflow
+
 ## Repository layout
 
 - `src/cars_store/`: baseline application code with the pricing bug
+- `src/cars_returns/`: realistic returns-and-claims app scaffold
 - `tests/acceptance/`: tests tied to the user-facing ticket
 - `tests/regression/`: tests protecting existing behavior
 - `tasks/cart-discount/`: task spec plus example agent submissions
+- `tasks/returns-*/`: first benchmark tickets for the returns app
 - `cars_eval/`: the CARS evaluator
 
 ## Evaluation model
@@ -54,6 +63,7 @@ Each delivery is scored on four gates:
 The evaluator also computes a `rework_proxy` so you can see whether the change is likely to create downstream review pain, but it is reported separately from the main gate.
 
 The rationale for this gated design is documented in [docs/metric.md](/home/gm26/experimenting/CARS/docs/metric.md).
+The next-step expansion plan for turning this into a more realistic app benchmark is documented in [docs/app-plan.md](/home/gm26/experimenting/CARS/docs/app-plan.md).
 
 ## Commands
 
@@ -74,6 +84,12 @@ Run the tests for a specific candidate module directly:
 
 ```bash
 PYTHONPATH=src CARS_PRICING_PATH=tasks/cart-discount/submissions/good/pricing.py python -m unittest discover -s tests -t .
+```
+
+Run the returns app locally:
+
+```bash
+PYTHONPATH=src python -m cars_returns
 ```
 
 ## Expected demo outcome
