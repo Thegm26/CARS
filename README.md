@@ -21,6 +21,7 @@ GitHub Actions now runs on every pull request and does two things:
 - runs the current CARS benchmark suite against tasks with `ci_expectations`
 
 Right now that benchmark check validates the original `cart-discount` demo so benchmark regressions are caught automatically in PRs.
+This also makes it easy to use a lightweight docs-only PR as a CI smoke test when needed.
 
 ## What The App Does
 
