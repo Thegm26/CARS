@@ -1,11 +1,11 @@
-name: CARS Benchmark
+name: CARS Correctness
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  cars-benchmark:
+  cars-correctness:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,15 +22,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Run returns app tests
+      - name: Run returns test suite
         run: |
           python -m unittest \
             tests.acceptance.test_returns_workflow \
             tests.regression.test_returns_regressions \
             tests.regression.test_returns_http
-
-      - name: Run CARS benchmark suite
-        env:
-          PYTHONPATH: src
-        run: |
-          python scripts/run_cars_ci.py

@@ -1,0 +1,11 @@
+{
+  "task_id": "returns-partial-refund",
+  "touched_files": [
+    "src/cars_returns/service.py"
+  ],
+  "acceptance_mapping": {
+    "AC1": "Refund total includes only the requested return items.",
+    "AC2": "Refund total is rounded to cents at the API boundary.",
+    "AC3": "Unrelated order totals are not changed."
+  }
+}

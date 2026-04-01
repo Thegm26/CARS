@@ -8,3 +8,4 @@ build/
 var/
 .venv/
 .venv_alt/
+.cars/*.local.json
