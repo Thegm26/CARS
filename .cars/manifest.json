@@ -2,7 +2,6 @@
   "task_id": "ci-ars-workflow-split",
   "touched_files": [
     ".github/workflows/cars-ars-gate.yml",
-    ".github/workflows/cars-benchmark.yml",
     ".github/workflows/cars-correctness.yml",
     ".gitignore",
     "README.md",
