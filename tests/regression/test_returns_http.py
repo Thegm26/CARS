@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from io import BytesIO
+import json
 from tempfile import TemporaryDirectory
 from urllib.parse import urlencode
 import unittest
@@ -71,15 +72,69 @@ class ReturnsHttpRegressionTests(unittest.TestCase):
         self.assertIn("Keys keep repeating", detail_body)
         self.assertIn("Refund total: $89.00", detail_body)
 
+    def test_manager_can_bulk_approve_eligible_pending_requests(self) -> None:
+        customer_cookie = self.login("customer@example.com", "customer123")
+        second_request_id = self.create_return_request(customer_cookie)
+        manager_cookie = self.login("manager@example.com", "manager123")
+
+        status, headers, body = self.call_app(
+            "POST",
+            "/returns/bulk-approve",
+            cookie=manager_cookie,
+            form_body={"request_ids": ["rr_900", second_request_id]},
+        )
+
+        self.assertEqual(status, "200 OK")
+        self.assertIn(("Content-Type", "application/json"), headers)
+        payload = json.loads(body)
+        self.assertEqual(payload["approved_request_ids"], ["rr_900", second_request_id])
+        self.assertEqual(payload["invalid_request_ids"], [])
+
+    def test_unauthorized_users_cannot_access_bulk_approve_endpoint(self) -> None:
+        agent_cookie = self.login("agent@example.com", "agent123")
+
+        status, _, body = self.call_app(
+            "POST",
+            "/returns/bulk-approve",
+            cookie=agent_cookie,
+            form_body={"request_ids": ["rr_900"]},
+        )
+
+        self.assertEqual(status, "403 Forbidden")
+        self.assertIn("role support_agent is not allowed", body)
+
+    def test_invalid_requests_are_reported_without_silent_approval(self) -> None:
+        manager_cookie = self.login("manager@example.com", "manager123")
+
+        status, _, body = self.call_app(
+            "POST",
+            "/returns/bulk-approve",
+            cookie=manager_cookie,
+            form_body={"request_ids": ["rr_900", "rr_missing"]},
+        )
+
+        self.assertEqual(status, "200 OK")
+        payload = json.loads(body)
+        self.assertEqual(payload["approved_request_ids"], ["rr_900"])
+        self.assertEqual(payload["invalid_request_ids"], ["rr_missing"])
+
+        detail_status, _, detail_body = self.call_app(
+            "GET",
+            "/returns/rr_900",
+            cookie=manager_cookie,
+        )
+        self.assertEqual(detail_status, "200 OK")
+        self.assertIn("Approved", detail_body)
+
     def call_app(
         self,
         method: str,
         path: str,
         *,
         cookie: str | None = None,
-        form_body: dict[str, str] | None = None,
+        form_body: dict[str, object] | None = None,
     ) -> tuple[str, list[tuple[str, str]], str]:
-        encoded_body = urlencode(form_body or {})
+        encoded_body = urlencode(form_body or {}, doseq=True)
         body = encoded_body.encode("utf-8")
         environ = {
             "REQUEST_METHOD": method,
@@ -108,3 +163,17 @@ class ReturnsHttpRegressionTests(unittest.TestCase):
         )
         self.assertEqual(status, "303 See Other")
         return dict(headers)["Set-Cookie"]
+
+    def create_return_request(self, cookie: str) -> str:
+        status, headers, _ = self.call_app(
+            "POST",
+            "/orders/ord_100/returns",
+            cookie=cookie,
+            form_body={
+                "qty_sku_keyboard": "0",
+                "qty_sku_cable": "1",
+                "notes": "Cable sheath split open",
+            },
+        )
+        self.assertEqual(status, "303 See Other")
+        return dict(headers)["Location"].rsplit("/", 1)[-1]

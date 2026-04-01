@@ -15,7 +15,7 @@ class DomainError(Exception):
 
 
 REQUEST_SEQUENCE = count(1000)
-AUDIT_SEQUENCE = count(5000)
+AUDIT_SEQUENCE = count(5001)
 
 
 class ReturnsService:
@@ -120,6 +120,31 @@ class ReturnsService:
         saved = self.repository.save_return_request(updated)
         self._audit(saved.id, user.id, "return_request_approved")
         return saved
+
+    def bulk_approve_return_requests(
+        self,
+        user: User,
+        request_ids: list[str],
+    ) -> dict[str, list[str]]:
+        require_role(user, {"support_manager"})
+        if not request_ids:
+            raise DomainError("at least one request id must be provided")
+
+        approved_request_ids: list[str] = []
+        invalid_request_ids: list[str] = []
+
+        for request_id in request_ids:
+            request = self.repository.get_return_request(request_id)
+            if request is None or request.status != "pending":
+                invalid_request_ids.append(request_id)
+                continue
+            approved = self.approve_return_request(user, request_id)
+            approved_request_ids.append(approved.id)
+
+        return {
+            "approved_request_ids": approved_request_ids,
+            "invalid_request_ids": invalid_request_ids,
+        }
 
     def reject_return_request(self, user: User, request_id: str) -> ReturnRequest:
         request = self._get_request(request_id)

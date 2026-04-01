@@ -119,6 +119,12 @@ def create_app(*, db_path: str | None = None, seed_demo: bool = True):
                 request_id = path.split("/")[2]
                 request = service.reject_return_request(user, request_id)
                 return _redirect(start_response, f"/returns/{request.id}")
+            if path == "/returns/bulk-approve" and method == "POST":
+                payload = service.bulk_approve_return_requests(
+                    user,
+                    form.get("request_ids", []),
+                )
+                return _json(start_response, 200, payload)
             if path == "/manager/queue" and method == "GET":
                 html = manager_queue_page(user, service.list_pending_requests_for_review(user))
                 return _html(start_response, 200, html)
