@@ -1,0 +1,43 @@
+{
+  "id": "returns-bulk-approve",
+  "title": "Managers can bulk approve eligible return requests",
+  "ticket": "Managers cannot bulk approve eligible return requests. Add a manager-only bulk approval path, report invalid request ids, and keep the change focused on the returns app service, route, and regression coverage.",
+  "allowed_files": [
+    "src/cars_returns/service.py",
+    "src/cars_returns/app.py",
+    "tests/regression/test_returns_http.py",
+    "tasks/returns-bulk-approve/task.json"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "text": "Managers can bulk approve eligible pending requests."
+    },
+    {
+      "id": "AC2",
+      "text": "Unauthorized users cannot access the endpoint."
+    },
+    {
+      "id": "AC3",
+      "text": "Invalid requests are reported without silently approving them."
+    }
+  ],
+  "required_review_sections": [
+    "What changed",
+    "Why",
+    "Assumptions",
+    "Risks",
+    "Test plan"
+  ],
+  "banned_calls": [
+    "eval",
+    "exec",
+    "compile",
+    "system",
+    "popen"
+  ],
+  "rework_limits": {
+    "max_touched_files": 4,
+    "max_changed_lines": 120
+  }
+}
