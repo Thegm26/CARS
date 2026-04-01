@@ -36,5 +36,25 @@
   "rework_limits": {
     "max_touched_files": 1,
     "max_changed_lines": 35
+  },
+  "ci_expectations": {
+    "raw_resolve_rate": 1.0,
+    "team_usable_delivery_rate": 0.5,
+    "submissions": {
+      "good": {
+        "correctness": true,
+        "alignment": true,
+        "reviewability": true,
+        "safety": true,
+        "team_usable": true
+      },
+      "bad": {
+        "correctness": true,
+        "alignment": true,
+        "reviewability": false,
+        "safety": false,
+        "team_usable": false
+      }
+    }
   }
 }

@@ -13,6 +13,15 @@ The benchmark idea behind the repo is still `CARS`:
 
 The long-term goal is to let this app generate realistic bugs, features, and maintenance tickets, and then evaluate agent deliveries against those tasks with CARS.
 
+## CI
+
+GitHub Actions now runs on every pull request and does two things:
+
+- runs the targeted returns-app test suite
+- runs the current CARS benchmark suite against tasks with `ci_expectations`
+
+Right now that benchmark check validates the original `cart-discount` demo so benchmark regressions are caught automatically in PRs.
+
 ## What The App Does
 
 The current app models a simple returns workflow:
