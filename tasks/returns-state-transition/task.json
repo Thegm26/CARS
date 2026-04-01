@@ -1,0 +1,42 @@
+{
+  "id": "returns-state-transition",
+  "title": "Rejected returns must not transition back to approved",
+  "ticket": "A rejected return request should not move back to approved through the standard approval endpoint. Preserve auditability and keep the fix narrow to workflow state handling.",
+  "allowed_files": [
+    "service.py",
+    "tests/regression/test_returns_regressions.py"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1",
+      "text": "Rejected return requests cannot transition to approved through the normal approval flow."
+    },
+    {
+      "id": "AC2",
+      "text": "The API returns a domain-specific validation error for the invalid transition."
+    },
+    {
+      "id": "AC3",
+      "text": "Existing approval behavior for pending requests is preserved."
+    }
+  ],
+  "required_review_sections": [
+    "What changed",
+    "Why",
+    "Assumptions",
+    "Risks",
+    "Test plan"
+  ],
+  "banned_calls": [
+    "eval",
+    "exec",
+    "compile",
+    "system",
+    "popen"
+  ],
+  "rework_limits": {
+    "max_touched_files": 2,
+    "max_changed_lines": 50
+  }
+}
+
