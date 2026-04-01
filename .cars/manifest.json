@@ -1,17 +1,12 @@
 {
-  "task_id": "ci-ars-workflow-split",
+  "task_id": "returns-bulk-approve",
   "touched_files": [
-    ".github/workflows/cars-ars-gate.yml",
-    ".github/workflows/cars-correctness.yml",
-    ".gitignore",
-    "README.md",
-    "scripts/run_cars_ci.py",
-    "scripts/run_pr_ars_ci.py",
-    "tasks/ci-ars-workflow-split/task.json"
+    "src/cars_returns/app.py",
+    "src/cars_returns/service.py",
+    "tasks/returns-bulk-approve/task.json"
   ],
   "acceptance_mapping": {
-    "AC1": "Correctness now runs in its own pull request workflow using the returns test suite.",
-    "AC2": "Alignment, Reviewability, and Safety now run in a separate pull request workflow using the PR diff and .cars metadata.",
-    "AC3": "The README explains the workflow split and the .cars PR metadata convention."
+    "AC1": "Added a bulk approval path.",
+    "AC2": "Only managers should use the endpoint."
   }
 }

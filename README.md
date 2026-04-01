@@ -64,6 +64,7 @@ The current app models a simple returns workflow:
 - return requests contain selected items and notes
 - managers can review pending requests
 - approvals and rejections are recorded in an audit trail
+- teams can now try bulk approval paths for return processing
 
 This is intentionally small, but it is large enough to create meaningful future tickets around:
 
