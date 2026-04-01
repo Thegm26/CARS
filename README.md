@@ -15,12 +15,45 @@ The long-term goal is to let this app generate realistic bugs, features, and mai
 
 ## CI
 
-GitHub Actions now runs on every pull request and does two things:
+GitHub Actions now runs two separate pull request workflows:
 
-- runs the targeted returns-app test suite
-- runs the current CARS benchmark suite against tasks with `ci_expectations`
+- `CARS Correctness`
+- `CARS ARS Gate`
 
-Right now that benchmark check validates the original `cart-discount` demo so benchmark regressions are caught automatically in PRs.
+`CARS Correctness` runs the returns-app test suite and owns the `C` in CARS.
+
+`CARS ARS Gate` is intentionally not responsible for correctness. It checks only:
+
+- `Alignment`
+- `Reviewability`
+- `Safety`
+
+That means PRs now have a clean split:
+
+- standard automated tests for `C`
+- PR metadata and diff validation for `A`, `R`, and `S`
+
+### PR Metadata Convention
+
+Every PR is expected to include:
+
+- `.cars/manifest.json`
+- `.cars/delivery.md`
+
+`.cars/manifest.json` must declare:
+
+- `task_id`
+- `touched_files`
+- `acceptance_mapping`
+
+`.cars/delivery.md` must include the review sections required by the referenced task.
+
+The ARS gate then:
+
+- compares the PR diff to the task's allowed scope
+- checks that all acceptance criteria are mapped
+- checks that the delivery notes are reviewable
+- scans changed Python files for banned unsafe calls
 
 ## What The App Does
 
@@ -127,6 +160,8 @@ The repo also still contains the original pricing-based CARS demo. That older de
   Behavioral and HTTP regression tests.
 - `tasks/returns-*/`
   Early task definitions for future benchmark use.
+- `.cars/`
+  Per-PR metadata used by the CARS ARS gate.
 - `src/cars_store/`
   Original small pricing demo used to explain the first CARS concept.
 - `tasks/cart-discount/`
